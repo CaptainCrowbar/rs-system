@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 # Run rs-bump-version to increment the patch number
 # and propagate the new version to version.hpp.
 
-project(Skeleton
+project(rs-system
     VERSION 0.1.1
     LANGUAGES CXX
 )
