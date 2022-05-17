@@ -21,13 +21,10 @@ void test_rs_system_dynamic_library() {
         dir = "/usr/local/lib";
         file = "libpng.dylib";
     #elif defined(_XOPEN_SOURCE)
-        #error Not implemented for Linux yet
-        // dir = "/usr/lib/x86_64-linux-gnu";
-        // file = "libcurl.so";
+        dir = "/usr/lib/x86_64-linux-gnu";
+        file = "libpng.so";
     #else
         #error Not implemented for Windows yet
-        // dir = "C:/cygwin64/home/rsmith/Source/vcpkg/installed/x64-windows/bin";
-        // file = "libcurl.dll";
     #endif
 
     Path path = dir / file;
