@@ -21,17 +21,17 @@ namespace RS::System {
             using native_flag_type = int;
             using native_handle_type = void*;
 
+            std::string dl_error() {
+                auto cptr = dlerror();
+                return cptr ? std::string(cptr) : std::string();
+            }
+
         #else
 
             using native_flag_type = uint32_t;
             using native_handle_type = HMODULE;
 
         #endif
-
-        std::string dl_error() {
-            auto cptr = dlerror();
-            return cptr ? std::string(cptr) : std::string();
-        }
 
         #define TRANSLATE_FLAG(from, to) if ((flags & Dso::from) != 0) native |= to
 
@@ -112,8 +112,6 @@ namespace RS::System {
 
         #else
 
-            HMODULE libptr = nullptr;
-
             if (file.empty()) {
                 handle_ = GetModuleHandle(nullptr);
             } else {
@@ -136,15 +134,17 @@ namespace RS::System {
 
     Dso::symbol_type Dso::load_symbol(const std::string& name, bool check) {
 
+        symbol_type sym;
+
         #ifdef _XOPEN_SOURCE
 
-            auto sym = dlsym(native_handle_type(handle_), name.data());
+            sym = dlsym(native_handle_type(handle_), name.data());
             if (check && ! sym)
                 throw std::system_error(std::make_error_code(std::errc::function_not_supported), quote(name) + ": " + dl_error());
 
         #else
 
-            auto sym = GetProcAddress(native_handle_type(handle_), name.data());
+            sym = reinterpret_cast<symbol_type>(GetProcAddress(native_handle_type(handle_), name.data()));
             if (check && ! sym) {
                 int err = GetLastError();
                 throw std::system_error(err, std::system_category(), name);
